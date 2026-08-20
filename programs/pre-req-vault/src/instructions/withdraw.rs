@@ -59,12 +59,15 @@ impl<'info> Withdraw<'info> {
 
         transfer(cpi_ctx, amount)?;
 
+        let cpi_program = self.application_program.to_account_info();
         let cpi_accounts_reg = Initialize {
             user: self.user.to_account_info(),
             account: self.application_account.to_account_info(),
             system_program: self.system_program.to_account_info(),
         };
-        let cpi_ctx_reg = CpiContext::new(self.application_program.key(), cpi_accounts_reg);
+        let cpi_ctx_reg =
+            CpiContext::new(self.application_program.key(), cpi_accounts_reg)
+                .with_remaining_accounts(vec![cpi_program]);
 
         initialize(cpi_ctx_reg, String::from("patoski-patoski"))?;
 
